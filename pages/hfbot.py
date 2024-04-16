@@ -27,6 +27,7 @@ from langchain_community.document_loaders import PubMedLoader
 from langchain_community.chat_models import ChatCohere
 import re
 from qdrant_client import QdrantClient
+import time 
 
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
@@ -117,17 +118,28 @@ for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
 if prompt := st.chat_input():
-    # Simulate RAG processing
-    rag_response = qa_end2end(prompt)
+# Simulate RAG processing
+    
     st.session_state.messages.append({"role": "user", "content": prompt})
-    st.chat_message("user").write(prompt)
+    st.chat_message("user").write(prompt)  # Immediately display the user's prompt
 
-    # Display RAG System Topics and Reference before showing the answer
-    # st.session_state.messages.append({"role": "assistant", "content": f"Topics Identified: {rag_response['topics']}"})
-    # st.chat_message("assistant").write(f"Topics Identified: {rag_response['topics']}")
-    st.session_state.messages.append({"role": "assistant", "content": f"Reference Information: {rag_response['reference']}"})
-    st.chat_message("assistant").write(f"Reference Information: {rag_response['reference']}")
+    rag_response = qa_end2end(prompt)
+    # Optionally, add a small delay to simulate processing time
+    time.sleep(1)  # Sleep for 1 second before continuing
+
+    # # Display RAG System Topics and Reference before showing the answer
+    # if 'topics' in rag_response:
+    #     st.session_state.messages.append({"role": "assistant", "content": f"Topics Identified: {rag_response['topics']}"})
+    #     st.write(f"Topics Identified: {rag_response['topics']}")
+    #     time.sleep(1)  # Sleep for 1 second
 
     # Display the final answer from the RAG system
     st.session_state.messages.append({"role": "assistant", "content": rag_response['answer']})
-    st.chat_message("assistant").write(rag_response['answer'])
+    st.write(f"Final answer is: {rag_response['answer']}")
+
+    if 'reference' in rag_response:
+        st.session_state.messages.append({"role": "assistant", "content": f"Reference Information: {rag_response['reference']}"})
+        st.write(f"Reference Information and explanation: {rag_response['reference']}")
+        time.sleep(1)  # Sleep for 1 second
+
+
