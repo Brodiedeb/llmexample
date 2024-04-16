@@ -35,7 +35,7 @@ with st.sidebar:
     "[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)"
     "[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/streamlit/llm-examples?quickstart=1)"
 
-st.title("💬 Medical Chatbot")
+st.title("🫀 Heart failure Chatbot")
 st.caption("🚀 A HF chatbot powered by OpenAI LLM integrated with RAG")
 
 if not openai_api_key:
