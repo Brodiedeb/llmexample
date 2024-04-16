@@ -44,18 +44,22 @@ if not openai_api_key:
 
 openai_chat_model = ChatOpenAI(openai_api_key=openai_api_key,model='gpt-4-turbo-preview')
 
+model_name="kamalkraj/BioSimCSE-BioLinkBERT-BASE"
+
 @st.cache_resource
+def creating_db(model_name):
+    base_embeddings = HuggingFaceEmbeddings(model_name=model_name)
+    qdrant_client = QdrantClient(
+        url="https://5fff5f2d-b0f0-4ecc-aefa-81905ce94dc9.us-east4-0.gcp.cloud.qdrant.io:6333", 
+        api_key="YYDLXtDyw75MKxpErAvcIqkGPxo_66qZILNb-EDLeoFJPgi8LbdKFQ")
+    qdrant_vectorstore = Qdrant(
+        client=qdrant_client, collection_name="rag_tech_db", 
+        embeddings=base_embeddings,
+    )
+    retriever = qdrant_vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.1})
+    return retriever
 
-base_embeddings = HuggingFaceEmbeddings(model_name="kamalkraj/BioSimCSE-BioLinkBERT-BASE")
-qdrant_client = QdrantClient(
-    url="https://5fff5f2d-b0f0-4ecc-aefa-81905ce94dc9.us-east4-0.gcp.cloud.qdrant.io:6333", 
-    api_key="YYDLXtDyw75MKxpErAvcIqkGPxo_66qZILNb-EDLeoFJPgi8LbdKFQ")
-qdrant_vectorstore = Qdrant(
-    client=qdrant_client, collection_name="rag_tech_db", 
-    embeddings=base_embeddings,
-)
-retriever = qdrant_vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.1})
-
+retriever = creating_db(model_name)
 
 def format_docs(docs):
     cleaned_content =  "\n\n".join([doc.page_content for doc in docs])
