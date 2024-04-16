@@ -123,8 +123,8 @@ if prompt := st.chat_input():
     st.chat_message("user").write(prompt)
 
     # Display RAG System Topics and Reference before showing the answer
-    st.session_state.messages.append({"role": "assistant", "content": f"Topics Identified: {rag_response['topics']}"})
-    st.chat_message("assistant").write(f"Topics Identified: {rag_response['topics']}")
+    # st.session_state.messages.append({"role": "assistant", "content": f"Topics Identified: {rag_response['topics']}"})
+    # st.chat_message("assistant").write(f"Topics Identified: {rag_response['topics']}")
     st.session_state.messages.append({"role": "assistant", "content": f"Reference Information: {rag_response['reference']}"})
     st.chat_message("assistant").write(f"Reference Information: {rag_response['reference']}")
 
