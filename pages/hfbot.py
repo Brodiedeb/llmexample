@@ -29,9 +29,17 @@ import re
 from qdrant_client import QdrantClient
 
 with st.sidebar:
-    openai_api_key = st.text_input("OpenAI API Key", type="password")
+    openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
     "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
+    "[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)"
+    "[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/streamlit/llm-examples?quickstart=1)"
 
+st.title("💬 Medical Chatbot")
+st.caption("🚀 A HF chatbot powered by OpenAI LLM integrated with RAG")
+
+if not openai_api_key:
+    st.info("Please add your OpenAI API key to continue.")
+    st.stop()
 
 openai_chat_model = ChatOpenAI(openai_api_key=openai_api_key,model='gpt-4-turbo-preview')
 
@@ -66,10 +74,10 @@ def qa_end2end(question):
   openai_diagnosis_chain = diagnosis_prompt | openai_chat_model | output_parser
   topics = openai_diagnosis_chain.invoke(question)
 
-  print(question)
-  print(100*'*')
-  print(topics)
-  print(100*'*')
+#   print(question)
+#   print(100*'*')
+#   print(topics)
+#   print(100*'*')
 
   rag_template = """[INST]Guideline committee said the following: "{context}". Based on what the guideline committee said, summarize the following question and cite the study from the guidelines relevant to these topics.\n\nHere are the topics: \n{topics}.[/INST]"""
   rag_prompt = ChatPromptTemplate.from_template(rag_template)
@@ -79,8 +87,8 @@ def qa_end2end(question):
       | rag_prompt | openai_chat_model | output_parser)
   reference = openai_retrieval_chain.invoke(topics)
 
-  print(reference)
-  print(100*'*')
+#   print(reference)
+#   print(100*'*')
 
   rag_template = """[INST]Based on the references provided, answer the following question and cite the study from the guidelines relevant to these topics.\n\nHere are the references:{ref}. \n\nHere is the question: \n{question}.[/INST]"""
   rag_prompt = ChatPromptTemplate.from_template(rag_template)
@@ -96,19 +104,12 @@ def qa_end2end(question):
 
 
   answer = qa_retrieval_chain.invoke({'ref': reference, 'question': question})
-  print(answer)
-  print(100*'*')
+#   print(answer)
+#   print(100*'*')
 
   return {'topics':topics, 'reference':reference, 'answer':answer}
 
-with st.sidebar:
-    openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
-    "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
-    "[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)"
-    "[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/streamlit/llm-examples?quickstart=1)"
 
-st.title("💬 Medical Chatbot")
-st.caption("🚀 A streamlit chatbot powered by OpenAI LLM integrated with RAG")
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
 
@@ -116,12 +117,6 @@ for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
 if prompt := st.chat_input():
-
-
-    if not openai_api_key:
-        st.info("Please add your OpenAI API key to continue.")
-        st.stop()
-
     # Simulate RAG processing
     rag_response = qa_end2end(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
