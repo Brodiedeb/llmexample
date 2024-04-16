@@ -5,3 +5,8 @@ duckduckgo-search
 anthropic>=0.3.0
 trubrics>=1.4.3
 streamlit-feedback
+pymupdf
+einops
+bs4
+qdrant-client
+sentence-transformers
