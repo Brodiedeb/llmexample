@@ -42,7 +42,7 @@ if not openai_api_key:
     st.info("Please add your OpenAI API key to continue.")
     st.stop()
 
-openai_chat_model = ChatOpenAI(openai_api_key=openai_api_key,model='gpt-3.5-turbo')
+openai_chat_model = ChatOpenAI(openai_api_key=openai_api_key,model='gpt-4-turbo')
 
 model_name="kamalkraj/BioSimCSE-BioLinkBERT-BASE"
 
