@@ -1,4 +1,4 @@
-from openai import OpenAI
+from langchain_openai import ChatOpenAI
 import streamlit as st
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import HuggingFacePipeline
@@ -53,13 +53,13 @@ def creating_db(model_name):
         url="https://5fff5f2d-b0f0-4ecc-aefa-81905ce94dc9.us-east4-0.gcp.cloud.qdrant.io:6333", 
         api_key="YYDLXtDyw75MKxpErAvcIqkGPxo_66qZILNb-EDLeoFJPgi8LbdKFQ")
     qdrant_vectorstore = Qdrant(
-        client=qdrant_client, collection_name="rag_tech_db", 
+        client=qdrant_client, collection_name="Cardiology ACC guidelines", 
         embeddings=base_embeddings,
     )
     retriever = qdrant_vectorstore.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.1})
-    return retriever
+    return retriever,qdrant_vectorstore
 
-retriever = creating_db(model_name)
+retriever,qdrant_vectorstore = creating_db(model_name)
 
 def format_docs(docs):
     cleaned_content =  "\n\n".join([doc.page_content for doc in docs])
@@ -75,7 +75,9 @@ def qa_end2end(question):
   diagnosis_prompt = ChatPromptTemplate.from_template(diagnosis_template)
   output_parser = StrOutputParser()
   openai_diagnosis_chain = diagnosis_prompt | openai_chat_model | output_parser
-  topics = openai_diagnosis_chain.invoke(question)
+#   topics = openai_diagnosis_chain.invoke(question)
+  topics = st.write_stream(openai_diagnosis_chain.stream(question))
+
 
 #   print(question)
 #   print(100*'*')
@@ -88,7 +90,14 @@ def qa_end2end(question):
       {"context": retriever | format_docs,
       "topics": RunnablePassthrough()}
       | rag_prompt | openai_chat_model | output_parser)
-  reference = openai_retrieval_chain.invoke(topics)
+#   reference = openai_retrieval_chain.invoke(topics)
+  reference = st.write_stream(openai_retrieval_chain.stream(topics))
+  context = qdrant_vectorstore.similarity_search_with_score(topics)
+  references = ' ; '.join(list(set([i[0].metadata['content'] for i in context])))
+  st.write('Reference:')
+  st.write(references)
+
+  
 
 #   print(reference)
 #   print(100*'*')
@@ -107,6 +116,8 @@ def qa_end2end(question):
 
 
   answer = qa_retrieval_chain.invoke({'ref': reference, 'question': question})
+  st.write("Final Answer is:")
+  answer = st.write_stream(qa_retrieval_chain.stream({'ref': reference, 'question': question}))
 #   print(answer)
 #   print(100*'*')
 
@@ -126,22 +137,24 @@ if prompt := st.chat_input():
     st.chat_message("user").write(prompt)  # Immediately display the user's prompt
 
     rag_response = qa_end2end(prompt)
+
+
     # Optionally, add a small delay to simulate processing time
     time.sleep(1)  # Sleep for 1 second before continuing
 
-    # # Display RAG System Topics and Reference before showing the answer
-    # if 'topics' in rag_response:
-    #     st.session_state.messages.append({"role": "assistant", "content": f"Topics Identified: {rag_response['topics']}"})
-    #     st.write(f"Topics Identified: {rag_response['topics']}")
+    # # # Display RAG System Topics and Reference before showing the answer
+    # # if 'topics' in rag_response:
+    # #     st.session_state.messages.append({"role": "assistant", "content": f"Topics Identified: {rag_response['topics']}"})
+    # #     st.write(f"Topics Identified: {rag_response['topics']}")
+    # #     time.sleep(1)  # Sleep for 1 second
+
+    # # Display the final answer from the RAG system
+    # st.session_state.messages.append({"role": "assistant", "content": rag_response['answer']})
+    # # st.write(f"Final answer is: {rag_response['answer']}")
+
+    # if 'reference' in rag_response:
+    #     st.session_state.messages.append({"role": "assistant", "content": f"Reference Information: {rag_response['reference']}"})
+    #     st.write(f"Reference Information and explanation: {rag_response['reference']}")
     #     time.sleep(1)  # Sleep for 1 second
-
-    # Display the final answer from the RAG system
-    st.session_state.messages.append({"role": "assistant", "content": rag_response['answer']})
-    st.write(f"Final answer is: {rag_response['answer']}")
-
-    if 'reference' in rag_response:
-        st.session_state.messages.append({"role": "assistant", "content": f"Reference Information: {rag_response['reference']}"})
-        st.write(f"Reference Information and explanation: {rag_response['reference']}")
-        time.sleep(1)  # Sleep for 1 second
 
 
