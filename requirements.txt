@@ -11,3 +11,4 @@ qdrant-client
 sentence-transformers
 langchain-openai
 qdrant-client
+langchain_community
