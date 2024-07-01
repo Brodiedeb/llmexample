@@ -88,3 +88,4 @@ tzdata==2023.3
 urllib3
 wheel==0.43.0
 yarl==1.9.4
+langchain-openai
