@@ -1,6 +1,5 @@
-from langchain_openai import ChatOpenAI
 import streamlit as st
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.llms import HuggingFacePipeline
 from langchain import PromptTemplate, LLMChain
 from langchain_core.prompts import ChatPromptTemplate
