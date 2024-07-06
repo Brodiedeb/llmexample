@@ -236,7 +236,7 @@ if submit_button: # and (chief_complaint is not None and HPI is not None and All
     # out = out.json()
     diagnoses_list = st.session_state.diagnoses 
     st.write(diagnoses_list)
-    diagnoses_list = ast.literal_eval(diagnoses_list)
+
 
     try:
         # Attempt to use literal_eval for parsing
