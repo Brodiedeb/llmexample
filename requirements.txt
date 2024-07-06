@@ -13,3 +13,4 @@ langchain-openai
 qdrant-client
 langchain_community
 langchain-cohere
+streamlit_sortables
