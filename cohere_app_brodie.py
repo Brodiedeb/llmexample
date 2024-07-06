@@ -244,8 +244,7 @@ if submit_button: # and (chief_complaint is not None and HPI is not None and All
     except:
         diagnoses_list = json.loads(diagnoses_list)
         print(f"Parsed list using JSON: {diagnoses_list}")
-    except:
-        print(f"Error decoding JSON: {json_e}")
+
 
 
       
