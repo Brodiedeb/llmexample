@@ -114,7 +114,7 @@ template = """You are a physician.
     Using the list of problems. Using the list, come up with a list of differential diagnoses which fit the best.
     Arrange those in the order of decreasing likelihood.
     Be as clear and precise as possible. No explanation needed. 
-    Format the output as a python list as follows ['Diagnosis 1, Diagnosis 2, Diagnosis 3, ...]'>
+    Format the output as a list as follows ['Diagnosis 1, Diagnosis 2, Diagnosis 3, ...]'>
     Here are the list of problems {problems}"""
 
 
@@ -236,8 +236,6 @@ if submit_button: # and (chief_complaint is not None and HPI is not None and All
     # out = out.json()
     diagnoses_list = st.session_state.diagnoses 
     st.write(diagnoses_list)
-
-
     try:
         # Attempt to use literal_eval for parsing
         diagnoses_list = list(diagnoses_list)
