@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 import base64
 import ast
-
+import json
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
 from langchain_cohere import ChatCohere
@@ -237,7 +237,16 @@ if submit_button: # and (chief_complaint is not None and HPI is not None and All
     diagnoses_list = st.session_state.diagnoses 
     st.write(diagnoses_list)
     diagnoses_list = ast.literal_eval(diagnoses_list)
-    st.session_state.diagnoses_list=[item.strip() for item in diagnoses_list]
+
+    try:
+        # Attempt to use literal_eval for parsing
+        diagnoses_list = ast.literal_eval(diagnoses_list)
+    except (SyntaxError, ValueError) as e:
+        diagnoses_list = json.loads(diagnoses_list)
+        print(f"Parsed list using JSON: {diagnoses_list}")
+    except json.JSONDecodeError as json_e:
+        print(f"Error decoding JSON: {json_e}")
+
 
       
 if "diagnoses" not in st.session_state:
