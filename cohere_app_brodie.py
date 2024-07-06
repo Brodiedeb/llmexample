@@ -235,13 +235,9 @@ if submit_button: # and (chief_complaint is not None and HPI is not None and All
     # out = requests.post("https://xgedf7kieezvkvgdw6qb7igvfe0iznnz.lambda-url.us-west-2.on.aws/", json=body)
     # out = out.json()
     diagnoses_list = st.session_state.diagnoses 
-    st.write(diagnoses_list)
-    try:
-        # Attempt to use literal_eval for parsing
-        diagnoses_list = ast.literal_eval(diagnoses_list)
-    except:
-        diagnoses_list = json.loads(diagnoses_list)
-        print(f"Parsed list using JSON: {diagnoses_list}")
+    diagnoses_list = ast.literal_eval(diagnoses_list)
+    st.session_state.diagnoses_list=[item.strip() for item in diagnoses_list]
+
 
 
 
