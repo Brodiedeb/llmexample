@@ -66,20 +66,20 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-with st.sidebar:
-    openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
-    "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
+# with st.sidebar:
+#     openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
+#     "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
    
 
-if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.")
-    st.stop()
+# if not openai_api_key:
+#     st.info("Please add your OpenAI API key to continue.")
+#     st.stop()
 
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
-cohere_chat_model = ChatOpenAI(openai_api_key=openai_api_key,model='gpt-4-turbo')
-# cohere_chat_model = ChatCohere(cohere_api_key='GTBBhzYzLyvtESHCSiKSFgcU1QhWHhviGFhVo9Y3')
+# cohere_chat_model = ChatOpenAI(openai_api_key=openai_api_key,model='gpt-4-turbo')
+cohere_chat_model = ChatCohere(cohere_api_key='GTBBhzYzLyvtESHCSiKSFgcU1QhWHhviGFhVo9Y3')
 
 model_name="kamalkraj/BioSimCSE-BioLinkBERT-BASE"
 
