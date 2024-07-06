@@ -238,7 +238,7 @@ if submit_button: # and (chief_complaint is not None and HPI is not None and All
     st.write(diagnoses_list)
     try:
         # Attempt to use literal_eval for parsing
-        diagnoses_list = list(diagnoses_list)
+        diagnoses_list = ast.literal_eval(diagnoses_list)
     except:
         diagnoses_list = json.loads(diagnoses_list)
         print(f"Parsed list using JSON: {diagnoses_list}")
