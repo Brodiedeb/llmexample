@@ -238,10 +238,7 @@ if submit_button: # and (chief_complaint is not None and HPI is not None and All
     diagnoses_list = ast.literal_eval(diagnoses_list)
     st.session_state.diagnoses_list=[item.strip() for item in diagnoses_list]
 
-
-
-
-      
+     
 if "diagnoses" not in st.session_state:
     st.session_state.diagnoses = False
 elif st.session_state.diagnoses:
